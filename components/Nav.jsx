@@ -1,14 +1,14 @@
 'use client';
-import Image from 'next/image';
-import Link from 'next/link';
 
-import { useState, useEffect } from 'react';
-import { signOut, signIn, useSession, getProviders } from 'next-auth/react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 
 // useEffect hook to asynchronously fetch providers and update the providers state variable.
 // "Create Post", "Sign Out", and a profile button are conditionally displayed based on whether the user is logged in (isUserLoggedIn)
 const Nav = () => {
-  const { data: session } = useSession;
+  const { data: session } = useSession();
 
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -23,7 +23,7 @@ const Nav = () => {
   }, []);
 
   return (
-    <nav className="flex-between w-full mv-16 pt-3">
+    <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
         <Image
           src="/assets/images/logo.svg"
@@ -35,7 +35,7 @@ const Nav = () => {
         <p className="logo_text">Promptopia</p>
       </Link>
 
-      {/* {alert(providers)} */}
+      {/* Desktop Navigation */}
       <div className="sm:flex hidden">
         {session?.user ? (
           <div className="flex gap-3 md:gap-5">
@@ -75,17 +75,20 @@ const Nav = () => {
           </>
         )}
       </div>
+
+      {/* Mobile Navigation */}
       <div className="sm:hidden flex relative">
         {session?.user ? (
           <div className="flex">
             <Image
               src={session?.user.image}
-              alt="logo"
-              width={30}
-              height={30}
+              width={37}
+              height={37}
               className="rounded-full"
-              onClick={() => setToggleDropdown((prev) => !prev)}
+              alt="profile"
+              onClick={() => setToggleDropdown(!toggleDropdown)}
             />
+
             {toggleDropdown && (
               <div className="dropdown">
                 <Link
@@ -103,6 +106,7 @@ const Nav = () => {
                   Create Prompt
                 </Link>
                 <button
+                  type="button"
                   onClick={() => {
                     setToggleDropdown(false);
                     signOut();
